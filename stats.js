@@ -305,7 +305,7 @@ gameOver = 1;
 
 function gameLoss() {
 gameOver = 1;
-    background.src = "lose.png";
+    background.src = "Lose.png";
     store.style="position: absolute; filter: opacity(0%);";
     warScreen.style="position: absolute; filter: opacity(0%);";
     statScreen.style="position: absolute; filter: opacity(0%);";
