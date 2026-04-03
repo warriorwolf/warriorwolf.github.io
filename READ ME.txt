@@ -1,0 +1,1 @@
+Start game by opening "index.html".

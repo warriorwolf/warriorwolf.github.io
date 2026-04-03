@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+
+<html>
+    <style> /* CSS */
+
+        * {
+            box-sizing: border-box;
+            
+        }
+
+        a {
+            color: black;
+        }
+
+        .spawnBlackScreenFade { /* black screen animation */
+            transition: all 3s;
+            position: absolute;
+            width: 1680px;
+            height: 860px;
+            top: 0%;
+            left: 0%;
+            z-index: 2;
+            
+            
+        }
+
+        .hide { /* hide element */
+            content-visibility: hidden;
+            opacity: 0%;
+        }
+
+        .show { /* show element */
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0%;
+            left: 0%;
+            
+        }
+
+        body { 
+            background-color: black;
+        }
+
+        .up {   /* movement button */
+            opacity: 00%;
+            background-color: black;
+            width: 10%;
+            height: 10%;
+            top: 1%;
+            left: 49%;
+            position: absolute;
+        }
+
+        .left {   /* movement button */
+            opacity: 0%;
+            background-color: black;
+            width: 10%;
+            height: 10%;
+            top: 47%;
+            left: 0.1%;
+            position: absolute;
+        }
+
+        .right {   /* movement button */
+            opacity: 0%;
+            background-color: black;
+            width: 10%;
+            height: 10%;
+            top: 47%;
+            right: 0.1%;
+            position: absolute;
+        }
+
+        .down {   /* movement button */
+            opacity: 0%;
+            background-color: black;
+            width: 10%;
+            height: 10%;
+            bottom: 0%;
+            left: 49%;
+            position: absolute;
+        }
+
+        .monsterMovingMsg {   /* game messages */
+            background-color: rgba(255, 0, 0, 0.466);
+            color: black;
+            z-index: 2;
+            position: absolute;
+            top: 50%;
+            left: 48%;
+            opacity: 100%;
+        }
+
+        .loseMonsterImg { /* lose screen */
+            position: absolute;
+            top: 15%;
+            left: 35%;
+            width: 30%;
+            height: 40%;
+            z-index: 5;
+        
+        }
+
+        .winScreenImg { /* win screen */
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0%;
+            left: 0%;
+            z-index: 5;
+        
+        }
+
+        .restartButton { /* restart game button after win or lose */
+            position: absolute;
+            top: 60%;
+            left: 42%;
+            width: 15%;
+            height: 5%;
+            background-color: red;
+            color: black;
+            border: solid 3px rgb(41, 39, 39);
+            z-index: 6;
+        }
+
+        .keyObjectLocationA { /* key item */
+            position: absolute;
+            z-index: 2;
+            width: 20%;
+            height: 30%;
+            top: 42%;
+            left: 40%;
+        }
+
+        .doorOpenButton {
+            position: absolute;
+            width: 10%;
+            height: 20%;
+            top: 34%;
+            left: 41%;
+            color: black;
+            opacity: 0%;
+
+        }
+
+        
+    </style>
+
+    <body></body> <!--for off screen color-->
+
+    <div class="otherImages"> <!--black screen-->
+        <img class="spawnBlackScreenFade" src="transitions/spawnBlackScreen.png">
+    </div>
+
+    <div class="sounds"> <!--sounds effects-->
+        <audio class="backgroundMusic" src="soundEffects/background_noise.mp3"></audio>
+        <audio class="win_music" src="soundEffects/win_music.wav" ></audio>
+        
+        <audio class="monsterFootsteps" src="soundEffects/monster_footsteps.mp3"></audio>
+        <audio class="doorOpen" src="soundEffects/door_open.wav"></audio>
+        
+        <audio class="keyPickUp" src="soundEffects/key_pickup.wav"></audio>
+        <audio class="monsterIsFar" src="soundEffects/monster_faraway.mp3"></audio>
+       
+    </div>
+
+    <div class="map_images"> <!--map images-->
+        <img src="room_imgs/far_left.png" class="hide" id="farLeft">
+        <img src="room_imgs/far_right.png" class="hide" id="farRight">
+        
+        <img src="room_imgs/lower_left.png" class="hide" id="lowerLeft">
+        <img src="room_imgs/lower_middle.png" class="hide" id="lowerMiddle"> 
+        <img src="room_imgs/lower_right.png" class="hide" id="lowerRight">
+
+        <img src="room_imgs/middleStartingRoom.png" class="show" id="middleStartingRoom">
+        <img src="room_imgs/upper_middle_gate.png" class="hide" id="middleGate">
+
+        <img src="room_imgs/top_left.png" class="hide" id="topLeft">
+        <img src="room_imgs/top_right.png" class="hide" id="topRight">
+
+    </div>
+
+    <div class="movement buttons"> <!-- movement buttons-->
+        <button class="up" onclick="moveUp()"></button>
+        <button class="down" onclick="moveDown()"></button>
+        <button class="left" onclick="moveLeft()"></button>
+        <button class="right" onclick="moveRight()"></button>
+    </div>
+
+    <div class="monster"> <!--monster-->
+        <img class="kayako, hide" src="monster/kayako.jpg">
+    </div>
+
+    <div class="gameMsg"> <!-- game messages-->
+        <p class="hide" id="monsterMoveMsg">Monster is moving...</p>
+        <p class="hide" id="doorLockedMsg"> The door is locked, but there is a key hole.</p>
+    </div>
+
+    <div class="loseScreen"> <!-- lose screen-->
+        <img class="hide" id="loseScreenMonsterImg" src="monster/kayako.jpg">
+    </div>
+
+    <div> <!-- win screen-->
+        <img src="ending_imgs/win.png" class="hide"  id="winImage"> 
+    </div>
+
+    <div class="restartButtons"> <!-- restart button-->
+        <button class="hide" id="restartGameButton"> <a href="game.html">Restart</a> </button>
+    </div>
+
+    <div class="gameObjects"> <!-- in-game objects-->
+         <img src="items/key.png" class="hide" id="keyObjectA" onclick="keyPickUp()"> <!-- key location; 1 = bottom left, 2 = bottom, 3 = far right -->
+         <button class="doorOpenButton" id="doorOpenButton" onclick="openDoor()"></button>
+    </div>
+
+    <script> // scripts //
+
+        const gameAssets = { //game asset references//
+           
+            sounds: document.querySelector('.sounds'),
+            room_imgs: document.querySelector('.map_images'),
+            monster: document.querySelector('.monster'),
+            spawnBlackScreen: document.querySelector('.spawnBlackScreenFade'),
+            doorButton: document.querySelector('#doorOpenButton'),
+            keyObjectA: document.querySelector('#keyObjectA'),
+
+        }
+        
+        var gameSystemVariables = { // game manager//
+         playerLocation: 'starterRoom', 
+         monsterLocation:'topRight',
+         roomImgs: gameAssets.room_imgs,
+         canMove: true,
+         playerHasKey: false,
+         keySpawn: Math.random(Math.floor(1) * 3) // key location; 1 = bottom left, 2 = bottom, 3 = far right//
+    
+        }
+
+        if (gameSystemVariables.keySpawn < 1) { // key spawn check//
+            gameSystemVariables.keySpawn = 1;
+        }
+
+        console.log('key spawn: ', gameSystemVariables.keySpawn); //log key spawn for check
+
+        function monsterTurn() { //monster AI //
+            let monsterDecision = Math.floor(Math.random(2) * 3);// monster decision, if 0 is chosen, monster stays in place.//
+            let gameMessageMonsterMove = document.querySelector('#monsterMoveMsg');
+
+            console.log(monsterDecision);
+            gameMessageMonsterMove.className = 'monsterMovingMsg' //display monster move msg//
+            gameSystemVariables.canMove = false;
+
+            const timeOut3 = setTimeout(() => { 
+                gameMessageMonsterMove.className = 'hide'; //hide game message //
+                gameSystemVariables.canMove = true; // player can move again//
+            },4500)
+
+            gameSystemVariables.canMove = false;
+            
+
+            switch (monsterDecision) {      // monster decision; number determines direction//
+                
+                case 1: if (gameSystemVariables.monsterLocation == 'topRight') { //monster is in top Right//
+                    gameSystemVariables.monsterLocation = 'farRight';
+                    console.log('monster is in: ' , gameSystemVariables.monsterLocation);
+                    // gameSystemVariables.canMove = true;
+
+                    if (gameSystemVariables.playerLocation == gameSystemVariables.monsterLocation) {
+                        roomImgs.querySelector('#farRight').className = 'hide';
+                        lose();
+
+                    }
+
+                    break;
+                }
+
+                case 2: if (gameSystemVariables.monsterLocation == 'topRight') { // monster is in top gate //
+                    gameSystemVariables.monsterLocation = 'upperMiddleGate';
+                    console.log('monster is in: ' , gameSystemVariables.monsterLocation);
+
+                    if (gameSystemVariables.playerLocation == gameSystemVariables.monsterLocation) {
+                        roomImgs.querySelector('#middleGate').className = 'hide';
+                        lose();
+                    }
+
+                    break;
+                }
+
+                case 1: if (gameSystemVariables.monsterLocation == 'farRight') { // monster is in far Right //
+                    gameSystemVariables.monsterLocation = 'lowerRight';
+                    console.log('monster is in: ' , gameSystemVariables.monsterLocation);
+
+                    if (gameSystemVariables.playerLocation == gameSystemVariables.monsterLocation) {
+                        roomImgs.querySelector('#lowerRight').className = 'hide';
+                        lose();
+                    }
+
+                    break;
+                }
+
+                case 2: if (gameSystemVariables.monsterLocation == 'farRight') { // monster is in far Right //
+                    gameSystemVariables.monsterLocation = 'starterRoom';
+                    console.log('monster is in: ' , gameSystemVariables.monsterLocation);
+                    
+
+                    if (gameSystemVariables.playerLocation == gameSystemVariables.monsterLocation) {
+                        roomImgs.querySelector('#middleStartingRoom').className = 'hide';
+                        lose();
+                    }
+
+                    break;
+                }
+
+                case 1: if (gameSystemVariables.monsterLocation == 'upperMiddleGate') { // monster is in middle gate //
+                    gameSystemVariables.monsterLocation = 'starterRoom';
+                    console.log('monster is in: ' , gameSystemVariables.monsterLocation);
+ 
+
+                    if (gameSystemVariables.playerLocation == gameSystemVariables.monsterLocation) {
+                        roomImgs.querySelector('#middleStartingRoom').className = 'hide';
+                        lose();
+                    }
+
+                    break;
+                }
+
+                case 2: if (gameSystemVariables.monsterLocation == 'upperMiddleGate') { // monster is in middle gate //
+                    gameSystemVariables.monsterLocation = 'topLeft';
+                    console.log('monster is in: ' , gameSystemVariables.monsterLocation);
+ 
+
+                    if (gameSystemVariables.playerLocation == gameSystemVariables.monsterLocation) {
+                        roomImgs.querySelector('#topLeft').className = 'hide';
+                        lose();
+                    }
+
+                    break;
+                }
+
+                case 1: if (gameSystemVariables.monsterLocation == 'farLeft') { // monster is in far left //
+                    gameSystemVariables.monsterLocation = 'topRight';
+                    console.log('monster is in: ' , gameSystemVariables.monsterLocation);
+ 
+
+                    if (gameSystemVariables.playerLocation == gameSystemVariables.monsterLocation) {
+                        roomImgs.querySelector('#topRight').className = 'hide';
+                        lose();
+                    }
+
+                    break;
+                }
+
+                case 2: if (gameSystemVariables.monsterLocation == 'farLeft') { // monster is in far left //
+                    gameSystemVariables.monsterLocation = 'lowerLeft';
+                    console.log('monster is in: ' , gameSystemVariables.monsterLocation);
+ 
+
+                    if (gameSystemVariables.playerLocation == gameSystemVariables.monsterLocation) {
+                        roomImgs.querySelector('#lowerLeft').className = 'hide';
+                        lose();
+                    }
+
+                    break;
+                }
+
+                case 1: if (gameSystemVariables.monsterLocation == 'starterRoom') { // monster is in starter room //
+                    gameSystemVariables.monsterLocation = 'lowerMiddle';
+                    console.log('monster is in: ' , gameSystemVariables.monsterLocation);
+ 
+
+                    if (gameSystemVariables.playerLocation == gameSystemVariables.monsterLocation) {
+                        roomImgs.querySelector('#lowerMiddle').className = 'hide';
+                        lose();
+                    }
+
+                    break;
+                }
+
+                case 2: if (gameSystemVariables.monsterLocation == 'starterRoom') { // monster is in starter room //
+                    gameSystemVariables.monsterLocation = 'upperMiddleGate';
+                    console.log('monster is in: ' , gameSystemVariables.monsterLocation);
+ 
+
+                    if (gameSystemVariables.playerLocation == gameSystemVariables.monsterLocation) {
+                        roomImgs.querySelector('#middleGate').className = 'hide';
+                        lose();
+                    }
+
+                    break;
+                }
+
+                case 1: if (gameSystemVariables.monsterLocation == 'lowerLeft') { // monster is in lower left //
+                    gameSystemVariables.monsterLocation = 'lowerMiddle';
+                    console.log('monster is in: ' , gameSystemVariables.monsterLocation);
+ 
+
+                    if (gameSystemVariables.playerLocation == gameSystemVariables.monsterLocation) {
+                        roomImgs.querySelector('#lowerMiddle').className = 'hide';
+                        lose();
+                    }
+
+                    break;
+                }
+
+                case 2: if (gameSystemVariables.monsterLocation == 'lowerLeft') { // monster is in lower left //
+                    gameSystemVariables.monsterLocation = 'farLeft';
+                    console.log('monster is in: ' , gameSystemVariables.monsterLocation);
+ 
+
+                    if (gameSystemVariables.playerLocation == gameSystemVariables.monsterLocation) {
+                        roomImgs.querySelector('#farLeft').className = 'hide';
+                        lose();
+                    }
+
+                    break;
+                }
+
+                case 1: if (gameSystemVariables.monsterLocation == 'lowerRight') { // monster is in lower right //
+                    gameSystemVariables.monsterLocation = 'lowerMiddle';
+                    console.log('monster is in: ' , gameSystemVariables.monsterLocation);
+ 
+
+                    if (gameSystemVariables.playerLocation == gameSystemVariables.monsterLocation) {
+                        roomImgs.querySelector('#lowerMiddle').className = 'hide';
+                        lose();
+                    }
+
+                    break;
+                }
+
+                case 2: if (gameSystemVariables.monsterLocation == 'lowerRight') { // monster is in lower right //
+                    gameSystemVariables.monsterLocation = 'farRight';
+                    console.log('monster is in: ' , gameSystemVariables.monsterLocation);
+ 
+
+                    if (gameSystemVariables.playerLocation == gameSystemVariables.monsterLocation) {
+                        roomImgs.querySelector('#farRight').className = 'hide';
+                        lose();
+                    }
+
+                    break;
+                }
+
+                case 1: if (gameSystemVariables.monsterLocation == 'topLeft') { // monster is in top left //
+                    gameSystemVariables.monsterLocation = 'farLeft';
+                    console.log('monster is in: ' , gameSystemVariables.monsterLocation);
+ 
+
+                    if (gameSystemVariables.playerLocation == gameSystemVariables.monsterLocation) {
+                        roomImgs.querySelector('#farLeft').className = 'hide';
+                        lose();
+                    }
+
+                    break;
+                }
+
+                case 2: if (gameSystemVariables.monsterLocation == 'topLeft') { // monster is in top left //
+                    gameSystemVariables.monsterLocation = 'upperMiddleGate';
+                    console.log('monster is in: ' , gameSystemVariables.monsterLocation);
+ 
+
+                    if (gameSystemVariables.playerLocation == gameSystemVariables.monsterLocation) {
+                        roomImgs.querySelector('#middleGate').className = 'hide';
+                        lose();
+                    }
+
+                    break;
+                }
+
+                case 0: if (gameSystemVariables.monsterLocation) { //monster stays in place//
+                    console.log('monster stays in place.');
+
+                    if (gameSystemVariables.playerLocation == gameSystemVariables.monsterLocation) {
+                        roomImgs.querySelector('#farRight').className = 'hide';
+                        roomImgs.querySelector('#middleGate').className = 'hide';
+                        roomImgs.querySelector('#farLeft').className = 'hide';
+                        roomImgs.querySelector('#topLeft').className = 'hide';
+                        roomImgs.querySelector('#topRight').className = 'hide';
+                        roomImgs.querySelector('#lowerMiddle').className = 'hide';
+                        roomImgs.querySelector('#lowerLeft').className = 'hide';
+                        roomImgs.querySelector('#lowerRight').className = 'hide';
+                        roomImgs.querySelector('#middleStartingRoom').className = 'hide';
+                        gameAssets.doorButton.className = 'hide';
+                        gameAssets.keyObjectA.className = 'hide';
+                        lose();
+
+                    }
+
+                    break;
+                }
+
+                case 1: if (gameSystemVariables.monsterLocation) { //monster stays in place//
+                    console.log('monster stays in place.');
+
+                    if (gameSystemVariables.playerLocation == gameSystemVariables.monsterLocation) {
+                        roomImgs.querySelector('#farRight').className = 'hide';
+                        roomImgs.querySelector('#middleGate').className = 'hide';
+                        roomImgs.querySelector('#farLeft').className = 'hide';
+                        roomImgs.querySelector('#topLeft').className = 'hide';
+                        roomImgs.querySelector('#topRight').className = 'hide';
+                        roomImgs.querySelector('#lowerMiddle').className = 'hide';
+                        roomImgs.querySelector('#lowerLeft').className = 'hide';
+                        roomImgs.querySelector('#lowerRight').className = 'hide';
+                        roomImgs.querySelector('#middleStartingRoom').className = 'hide';
+                        gameAssets.keyObjectA.className = 'hide';
+                        gameAssets.doorButton.className = 'hide';
+                        lose();
+
+                    }
+
+                    break;
+                }
+
+                case 2: if (gameSystemVariables.monsterLocation) { //monster stays in place//
+                    console.log('monster stays in place.');
+
+                    if (gameSystemVariables.playerLocation == gameSystemVariables.monsterLocation) {
+                        roomImgs.querySelector('#farRight').className = 'hide';
+                        roomImgs.querySelector('#middleGate').className = 'hide';
+                        roomImgs.querySelector('#farLeft').className = 'hide';
+                        roomImgs.querySelector('#topLeft').className = 'hide';
+                        roomImgs.querySelector('#topRight').className = 'hide';
+                        roomImgs.querySelector('#lowerMiddle').className = 'hide';
+                        roomImgs.querySelector('#lowerLeft').className = 'hide';
+                        roomImgs.querySelector('#lowerRight').className = 'hide';
+                        roomImgs.querySelector('#middleStartingRoom').className = 'hide';
+                        gameAssets.doorButton.className = 'hide';
+                        gameAssets.keyObjectA.className = 'hide';
+                        lose();
+
+                    }
+
+                    break;
+                }
+                
+
+            }
+
+            
+
+            //if (monsterDecision == 1 && gameSystemVariables.monsterLocation == 'topRight') { 
+                //gameSystemVariables.monsterLocation = '';
+               // console.log(gameSystemVariables.monsterLocation);
+            //}
+        }
+        
+
+        function moveUp(){ //player movement//
+                
+                roomImgs = gameSystemVariables.roomImgs;
+
+                if (gameSystemVariables.playerLocation == "starterRoom" && gameSystemVariables.canMove == true) { //starter room to middle gate//
+                    
+                    gameSystemVariables.playerLocation = 'upperMiddleGate';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#middleStartingRoom').className = 'hide';
+                    roomImgs.querySelector('#middleGate').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    monsterTurn();
+
+                }
+
+                if (gameSystemVariables.playerLocation == "farLeft" && gameSystemVariables.canMove == true) { //far left to top left//
+
+                    gameSystemVariables.playerLocation = 'topLeft';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#farLeft').className = 'hide';
+                    roomImgs.querySelector('#topLeft').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    monsterTurn();
+
+                }
+
+                if (gameSystemVariables.playerLocation == "lowerMiddle" && gameSystemVariables.canMove == true) { //lower middle to starter room//
+
+                    gameSystemVariables.playerLocation = 'starterRoom';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#lowerMiddle').className = 'hide';
+                    roomImgs.querySelector('#middleStartingRoom').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    monsterTurn();
+
+                }
+
+                if (gameSystemVariables.playerLocation == "lowerLeft" && gameSystemVariables.canMove == true) { //lower right to far right//
+
+                    gameSystemVariables.playerLocation = 'farLeft';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#lowerLeft').className = 'hide';
+                    roomImgs.querySelector('#farLeft').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    gameAssets.keyObjectA.className = 'hide';
+                    monsterTurn();
+
+                }
+
+                if (gameSystemVariables.playerLocation == "farRight" && gameSystemVariables.canMove == true) { //lower right to far right//
+
+                    gameSystemVariables.playerLocation = 'topRight';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#farRight').className = 'hide';
+                    roomImgs.querySelector('#topRight').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    monsterTurn();
+
+                }
+
+                if (gameSystemVariables.playerLocation == "lowerRight" && gameSystemVariables.canMove == true) { //lower right to far right//
+
+                    gameSystemVariables.playerLocation = 'farRight';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#lowerRight').className = 'hide';
+                    roomImgs.querySelector('#farRight').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    monsterTurn();
+
+                }
+
+        }
+
+        function moveLeft(){ //player movement//
+                roomImgs = gameSystemVariables.roomImgs;
+
+                if (gameSystemVariables.playerLocation == "starterRoom" && gameSystemVariables.canMove == true) { //starter room to far left//
+
+                    gameSystemVariables.playerLocation = 'farLeft';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#middleStartingRoom').className = 'hide';
+                    roomImgs.querySelector('#farLeft').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    monsterTurn();
+
+                }
+
+                if (gameSystemVariables.playerLocation == "upperMiddleGate" && gameSystemVariables.canMove == true) { //middle gate to top left//
+
+                    gameSystemVariables.playerLocation = 'topLeft';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#middleGate').className = 'hide';
+                    roomImgs.querySelector('#topLeft').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    monsterTurn();
+
+                }
+
+                if (gameSystemVariables.playerLocation == "farRight" && gameSystemVariables.canMove == true) { //far right to starting room//
+
+                    gameSystemVariables.playerLocation = 'starterRoom';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#farRight').className = 'hide';
+                    roomImgs.querySelector('#middleStartingRoom').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    monsterTurn();
+
+                }
+
+                if (gameSystemVariables.playerLocation == "lowerMiddle" && gameSystemVariables.canMove == true) { //far right to starting room//
+
+                    gameSystemVariables.playerLocation = 'lowerLeft';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#lowerMiddle').className = 'hide';
+                    roomImgs.querySelector('#lowerLeft').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    monsterTurn();
+
+                    if (gameSystemVariables.playerHasKey == false && gameSystemVariables.keySpawn == 1) {
+                        gameAssets.keyObjectA.className = 'keyObjectLocationA';
+                    }
+
+                }
+
+                if (gameSystemVariables.playerLocation == "lowerRight" && gameSystemVariables.canMove == true) { //far right to starting room//
+
+                    gameSystemVariables.playerLocation = 'lowerMiddle';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#lowerRight').className = 'hide';
+                    roomImgs.querySelector('#lowerMiddle').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    monsterTurn();
+
+                }
+
+                if (gameSystemVariables.playerLocation == "topRight" && gameSystemVariables.canMove == true) { //far right to starting room//
+
+                    gameSystemVariables.playerLocation = 'upperMiddleGate';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#topRight').className = 'hide';
+                    roomImgs.querySelector('#middleGate').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    monsterTurn();
+
+                }
+
+
+        }
+
+        function moveDown(){ //player movement//
+                roomImgs = gameSystemVariables.roomImgs;
+                if (gameSystemVariables.playerLocation == "starterRoom" && gameSystemVariables.canMove == true) { //starter room to lower middle//
+
+                    gameSystemVariables.playerLocation = 'lowerMiddle';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#middleStartingRoom').className = 'hide';
+                    roomImgs.querySelector('#lowerMiddle').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    monsterTurn();
+
+                }
+
+                if (gameSystemVariables.playerLocation == "farLeft" &&  gameSystemVariables.canMove == true) { //far left to lower left//
+
+                    gameSystemVariables.playerLocation = 'lowerLeft';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#farLeft').className = 'hide';
+                    roomImgs.querySelector('#lowerLeft').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    monsterTurn();
+
+                    if (gameSystemVariables.playerHasKey == false && gameSystemVariables.keySpawn == 1) {
+                        gameAssets.keyObjectA.className = 'keyObjectLocationA';
+                    }
+
+                }
+
+                 if (gameSystemVariables.playerLocation == "upperMiddleGate" && gameSystemVariables.canMove == true) { //middle gate to starter room//
+
+                    gameSystemVariables.playerLocation = 'starterRoom';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#middleGate').className = 'hide';
+                   roomImgs.querySelector('#middleStartingRoom').className = 'show';
+                   gameSystemVariables.canMove = false;
+                   monsterTurn();
+
+                }
+
+                if (gameSystemVariables.playerLocation == "farRight" && gameSystemVariables.canMove == true) { //far right to lower right//
+
+                    gameSystemVariables.playerLocation = 'lowerRight';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#farRight').className = 'hide';
+                   roomImgs.querySelector('#lowerRight').className = 'show';
+                   gameSystemVariables.canMove = false;
+                   monsterTurn();
+
+                }
+
+                if (gameSystemVariables.playerLocation == "topLeft" && gameSystemVariables.canMove == true) { //upper left to far left//
+
+                    gameSystemVariables.playerLocation = 'farLeft';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#topLeft').className = 'hide';
+                   roomImgs.querySelector('#farLeft').className = 'show';
+                   gameSystemVariables.canMove = false;
+                   monsterTurn();
+
+                }
+
+                if (gameSystemVariables.playerLocation == "topRight" && gameSystemVariables.canMove == true) { //upper left to far left//
+
+                    gameSystemVariables.playerLocation = 'farRight';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#topRight').className = 'hide';
+                   roomImgs.querySelector('#farRight').className = 'show';
+                   gameSystemVariables.canMove = false;
+                   monsterTurn();
+
+                }
+
+        }
+
+        function moveRight(){ //player movement//
+                roomImgs = gameSystemVariables.roomImgs;
+
+                if (gameSystemVariables.playerLocation == "starterRoom" && gameSystemVariables.canMove == true) { //starter room to far right//
+
+                    gameSystemVariables.playerLocation = 'farRight';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#middleStartingRoom').className = 'hide';
+                    roomImgs.querySelector('#farRight').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    monsterTurn();
+
+                }
+
+                if (gameSystemVariables.playerLocation == "farLeft" && gameSystemVariables.canMove == true) { //starter room to far right//
+
+                    gameSystemVariables.playerLocation = 'starterRoom';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#farLeft').className = 'hide';
+                    roomImgs.querySelector('#middleStartingRoom').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    monsterTurn();
+
+                }
+
+                if (gameSystemVariables.playerLocation == "lowerMiddle" && gameSystemVariables.canMove == true) { //middle gate to top right//
+
+                    gameSystemVariables.playerLocation = 'lowerRight';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#lowerMiddle').className = 'hide';
+                    roomImgs.querySelector('#lowerRight').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    monsterTurn();
+
+                } 
+
+                if (gameSystemVariables.playerLocation == "lowerLeft" && gameSystemVariables.canMove == true) { //lower left to lower middle//
+
+                    gameSystemVariables.playerLocation = 'lowerMiddle';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#lowerLeft').className = 'hide';
+                    roomImgs.querySelector('#lowerMiddle').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    gameAssets.keyObjectA.className = 'hide';
+                    monsterTurn();
+
+                }
+
+                if (gameSystemVariables.playerLocation == "upperMiddleGate" && gameSystemVariables.canMove == true) { //middle gate to top right//
+
+                    gameSystemVariables.playerLocation = 'topRight';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#middleGate').className = 'hide';
+                    roomImgs.querySelector('#topRight').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    monsterTurn();
+
+                } 
+
+                if (gameSystemVariables.playerLocation == "topLeft" && gameSystemVariables.canMove == true) { //middle gate to top right//
+
+                    gameSystemVariables.playerLocation = 'upperMiddleGate';
+                    console.log(gameSystemVariables.playerLocation);
+                    roomImgs.querySelector('#topLeft').className = 'hide';
+                    roomImgs.querySelector('#middleGate').className = 'show';
+                    gameSystemVariables.canMove = false;
+                    monsterTurn();
+
+                } 
+
+        }
+            
+
+        function spawnBlackScreen() { //blackScreen transition//
+            const timeOut = setTimeout(() => {
+                let opacityPropertyValue = 0;
+                let styling = `opacity: ${opacityPropertyValue}%;`;
+                gameAssets.spawnBlackScreen.style = styling;
+
+            },100)
+
+            const timeOut2 = setTimeout(() => { //remove blackScreen, spawn in starting room.//
+                gameAssets.spawnBlackScreen.remove();
+               
+            },2000)
+        }
+
+        function lose() { // lose screen //
+            const loseScreen = document.querySelector('#loseScreenMonsterImg');
+            const restartButton = document.querySelector('#restartGameButton');
+            canMove = false;
+            loseScreen.className = 'loseMonsterImg';
+
+            const timeOut4 = setTimeout(() => {
+                 restartButton.className = 'restartButton';
+            }, 5000)
+            
+            restartButton.className = 'hide';
+           
+        }
+
+        function win() { // win screen //
+            const winScreen = document.querySelector('#winImage');
+            const restartButton = document.querySelector('#restartGameButton');
+            gameSystemVariables.canMove = false;
+            winScreen.className = 'winScreenImg';
+
+            const timeOut4 = setTimeout(() => {
+                 restartButton.className = '';
+                 restartButton.innerHTML = '<a href="game.html">Play again? </a>';
+                 restartButton.style = 'position: absolute; bottom: 1%; left: 48%; width: 8%; height: 4%; background-color: red; color: black; border: solid 3px rgb(41, 39, 39); z-index: 6; opacity: 80%;';
+            }, 5000)
+            
+            roomImgs.querySelector('#farRight').className = 'hide';
+            roomImgs.querySelector('#middleGate').className = 'hide';
+            roomImgs.querySelector('#farLeft').className = 'hide';
+            roomImgs.querySelector('#topLeft').className = 'hide';
+            roomImgs.querySelector('#topRight').className = 'hide';
+            roomImgs.querySelector('#lowerMiddle').className = 'hide';
+            roomImgs.querySelector('#lowerLeft').className = 'hide';
+            roomImgs.querySelector('#lowerRight').className = 'hide';
+            roomImgs.querySelector('#middleStartingRoom').className = 'hide';
+            restartButton.className = 'hide';
+           
+        }
+
+        function openDoor() { // open door function
+            const doorOpenButton = document.querySelector('#doorOpenButton');
+            const monsterMsg = document.querySelector('#monsterMoveMsg')
+            
+            if (gameSystemVariables.playerHasKey == true && monsterMsg.className == 'hide') {
+                doorOpenButton.className = 'hide';
+                win()
+            }
+        }
+
+        function keyPickUp() { // key pick up function
+            const monsterMsg = document.querySelector('#monsterMoveMsg')
+            
+            if (monsterMsg.className == 'hide') {
+                gameAssets.keyObjectA.className = 'hide';
+                gameSystemVariables.playerHasKey = true;
+            }
+        }
+
+        spawnBlackScreen() //player camera spawns here//
+
+    </script>
+    
+
+</html>

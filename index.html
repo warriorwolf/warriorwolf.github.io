@@ -1,5 +1,98 @@
 <!DOCTYPE html>
 
 <html>
-    <h1>HELLO</h1>
+    <style>  /* CSS */
+        * {box-sizing: border-box;}
+
+        body {background-color: rgb(102, 103, 103);}
+
+        a {color: black;}
+
+        #tutorialParagraph {opacity: 0%; position: absolute; left: 38%; top: 34.5%; font-size: 15px; width: 400px;}
+
+        #title {left: 38.5%; top: 5%; background-color: rgb(86, 83, 83); border: solid black 2px;  width:  fit-content; height: auto; position: absolute;}
+
+        #play_button {position: absolute; left: 47%; top: 16%; width: 110px; height: 50px; border-color: black; background-color: darkred; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+
+        #tutorial_button {position: absolute; left: 48%; top: 22%; width: 80px; height: 50px; border-color: black; background-color: green;}
+
+        #boneHead {
+            position: absolute; width: 700px; height: 570px; left: 1%; top: 30%;
+        }
+
+        #boneHead2 {
+            position: absolute; width: 700px; height: 570px; right: 1%; top: 30%;
+        }
+
+        #patchNotesButton {
+           position: absolute; background-color: green; bottom: 12%; right: 8%; z-index: 4;
+        }
+
+        #patchNotes {
+             position: absolute; background-color: rgb(2, 105, 2); opacity: 0%; bottom: 15%; right: 8%; border: solid 3px black;
+        }
+
+        #qualityText {
+            position: absolute;
+            bottom: 10%;
+            left: 33%;
+            width: 37.3%;
+            border: solid black 3px;
+            background-color: rgb(17, 116, 12);
+            width: fit-content;
+        }
+
+    </style>
+
+
+    <body>
+        <h1 id="title">Escape Room [version 1.0]</h1> <!-- title -->
+
+        <script> // scripts //
+            function displayTutorialText() {
+                const tutorialText = document.querySelector('#tutorialParagraph');
+                tutorialText.style = 'opacity: 100%;';
+            }
+
+            function displayPatchNotes() {
+                const patchNotes = document.querySelector('#patchNotes');
+                patchNotes.style = 'position: absolute; background-color: rgb(2, 105, 2); opacity: 100%; bottom: 15%; right: 8%; border: solid 3px black;';
+            }
+
+            function changePlayButtonText() {
+                const playButton = document.querySelector('#play_button');
+                playButton.innerHTML = '<a href="game.html">die</a>';
+                playButton.onmouseover='';
+            }
+        </script>
+    </body>
+
+    <div id="buttons"> <!-- buttons-->
+         <button id="play_button" onmouseover="changePlayButtonText()"><a href="game.html">Play</a></button>
+
+         <button id="tutorial_button" onclick="displayTutorialText()">How to play</button>
+
+         <button id="patchNotesButton" onclick="displayPatchNotes()">Patch Notes</button>
+    </div>
+
+    <div id="paragraphs"> <!--tutorial-->
+        <p id="tutorialParagraph"> Navigate through ajacent rooms clicking the arrows around the room, use the screen on the top right help visualize where you are on the map. A <span style="color: rgb(219, 23, 23); ">monster</span> moves to another room when you move through one yourself. If you and the <span style="color: rgb(219, 23, 23); ">monster</span> are in the same room, you lose. Win by finding the <span style="color: rgb(51, 184, 48); ">exit</span> and escaping.</p>
+    
+        <ul id="patchNotes">
+            <li>version 1.0 [inital release!]</li>
+
+        </ul>
+    </div>
+
+    <div id="imgs"> <!--imgs-->
+        <img id="boneHead" src="menu_imgs/bone_head.png">
+
+        <img id="boneHead2" src="menu_imgs/bone_head.png">
+    </div>
+
+    <div id="quality-ensurance"> <!--message for better experince-->
+        <h5 id="qualityText"> For the best experince, play with headphones, turn on full screen and in a dark or dimly lit room ;)</h5>
+    </div>
+    
+
 </html>
