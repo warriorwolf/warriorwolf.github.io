@@ -144,6 +144,11 @@
 
         }
 
+        #doorLockedMsg {
+            width: 300px;
+            height: 50px;
+        }
+
         
     </style>
 
@@ -153,15 +158,15 @@
         <img class="spawnBlackScreenFade" src="transitions/spawnBlackScreen.png">
     </div>
 
-    <div class="sounds"> <!--sounds effects-->
-        <audio class="backgroundMusic" src="soundEffects/background_noise.mp3"></audio>
-        <audio class="win_music" src="soundEffects/win_music.wav" ></audio>
+    <div id="sounds"> <!--sounds effects-->
+        <audio id="backgroundMusic" src="soundEffects/background_noise.mp3"></audio>
+        <audio id="win_music" src="soundEffects/win_music.wav" ></audio>
         
-        <audio class="monsterFootsteps" src="soundEffects/monster_footsteps.mp3"></audio>
-        <audio class="doorOpen" src="soundEffects/door_open.wav"></audio>
+        <audio id="monsterFootsteps" src="soundEffects/monster_footsteps.mp3"></audio>
+        <audio id="doorOpen" src="soundEffects/door_open.wav"></audio>
         
-        <audio class="keyPickUp" src="soundEffects/key_pickup.wav"></audio>
-        <audio class="monsterIsFar" src="soundEffects/monster_faraway.mp3"></audio>
+        <audio id="keyPickUp" src="soundEffects/key_pickup.wav"></audio>
+        <audio id="monsterIsFar" src="soundEffects/monster_faraway.mp3"></audio>
        
     </div>
 
@@ -218,7 +223,7 @@
 
         const gameAssets = { //game asset references//
            
-            sounds: document.querySelector('.sounds'),
+            sounds: document.querySelector('#sounds'),
             room_imgs: document.querySelector('.map_images'),
             monster: document.querySelector('.monster'),
             spawnBlackScreen: document.querySelector('.spawnBlackScreenFade'),
@@ -246,17 +251,31 @@
         function monsterTurn() { //monster AI //
             let monsterDecision = Math.floor(Math.random(2) * 3);// monster decision, if 0 is chosen, monster stays in place.//
             let gameMessageMonsterMove = document.querySelector('#monsterMoveMsg');
+            const lockedMsg = document.querySelector('#doorLockedMsg');
+            
 
             console.log(monsterDecision);
             gameMessageMonsterMove.className = 'monsterMovingMsg' //display monster move msg//
             gameSystemVariables.canMove = false;
+            lockedMsg.className = 'hide';
 
             const timeOut3 = setTimeout(() => { 
                 gameMessageMonsterMove.className = 'hide'; //hide game message //
                 gameSystemVariables.canMove = true; // player can move again//
             },4500)
 
+            const soundGenerationNumber = Math.floor(Math.random(1) * 4) // monster noise chance //
+                console.log('monster noise chance: ', soundGenerationNumber);
+              if (soundGenerationNumber == 2) {
+                if (gameSystemVariables.playerLocation !== gameSystemVariables.monsterLocation) {
+                  soundsEffects = gameAssets.sounds; // sound effects //
+                  const footstep = document.querySelector('#sounds').querySelector('#monsterIsFar');
+                  footstep.play();
+                } 
+              }
+
             gameSystemVariables.canMove = false;
+
             
 
             switch (monsterDecision) {      // monster decision; number determines direction//
@@ -270,6 +289,10 @@
                         roomImgs.querySelector('#farRight').className = 'hide';
                         lose();
 
+                    }
+
+                    if (gameSystemVariables.playerLocation !== gameSystemVariables.monsterLocation) {
+                        
                     }
 
                     break;
@@ -533,8 +556,7 @@
 
                     break;
                 }
-                
-
+              
             }
 
             
@@ -617,6 +639,7 @@
 
                 }
 
+
         }
 
         function moveLeft(){ //player movement//
@@ -692,11 +715,11 @@
 
                 }
 
-
         }
 
         function moveDown(){ //player movement//
                 roomImgs = gameSystemVariables.roomImgs;
+
                 if (gameSystemVariables.playerLocation == "starterRoom" && gameSystemVariables.canMove == true) { //starter room to lower middle//
 
                     gameSystemVariables.playerLocation = 'lowerMiddle';
@@ -848,17 +871,20 @@
                 let styling = `opacity: ${opacityPropertyValue}%;`;
                 gameAssets.spawnBlackScreen.style = styling;
 
-            },100)
+            },120)
 
             const timeOut2 = setTimeout(() => { //remove blackScreen, spawn in starting room.//
                 gameAssets.spawnBlackScreen.remove();
                
-            },2000)
+            },1300)
         }
 
         function lose() { // lose screen //
             const loseScreen = document.querySelector('#loseScreenMonsterImg');
             const restartButton = document.querySelector('#restartGameButton');
+            const footstep = document.querySelector('#sounds').querySelector('#monsterIsFar');
+
+            footstep.pause();
             canMove = false;
             loseScreen.className = 'loseMonsterImg';
 
@@ -873,6 +899,8 @@
         function win() { // win screen //
             const winScreen = document.querySelector('#winImage');
             const restartButton = document.querySelector('#restartGameButton');
+            const winMusic = gameAssets.sounds.querySelector('#win_music');
+            winMusic.play();
             gameSystemVariables.canMove = false;
             winScreen.className = 'winScreenImg';
 
@@ -897,11 +925,16 @@
 
         function openDoor() { // open door function
             const doorOpenButton = document.querySelector('#doorOpenButton');
-            const monsterMsg = document.querySelector('#monsterMoveMsg')
+            const monsterMsg = document.querySelector('#monsterMoveMsg');
+            const lockedMsg = document.querySelector('#doorLockedMsg');
             
             if (gameSystemVariables.playerHasKey == true && monsterMsg.className == 'hide') {
                 doorOpenButton.className = 'hide';
                 win()
+            }
+
+            if (gameSystemVariables.playerHasKey == false && monsterMsg.className == 'hide') {
+                lockedMsg.className = 'show';
             }
         }
 
