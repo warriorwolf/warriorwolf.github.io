@@ -68,7 +68,7 @@
     </body>
 
     <div id="buttons"> <!-- buttons-->
-         <button id="play_button" onmouseover="changePlayButtonText()"><a href="game.html">Play</a></button>
+         <button id="play_button" onclick="startGame()" onmouseover="changePlayButtonText()"><a href="game.html">Play</a></button>
 
          <button id="tutorial_button" onclick="displayTutorialText()">How to play</button>
 
@@ -97,3 +97,13 @@
     
 
 </html>
+
+<script>
+    const startGameButton = document.querySelector('#play_button');
+
+    function startGame() {
+        location.assign('https://warriorwolf.github.io/game.html');
+    }
+
+
+</script>

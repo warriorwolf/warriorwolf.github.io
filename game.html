@@ -114,7 +114,7 @@
 
         .restartButton { /* restart game button after win or lose */
             position: absolute;
-            top: 60%;
+            top: 64%;
             left: 42%;
             width: 15%;
             height: 5%;
@@ -863,7 +863,6 @@
                 } 
 
         }
-            
 
         function spawnBlackScreen() { //blackScreen transition//
             const timeOut = setTimeout(() => {
@@ -890,6 +889,8 @@
 
             const timeOut4 = setTimeout(() => {
                  restartButton.className = 'restartButton';
+                 restartButton.addEventListener('click', function() {
+                    location.assign('https://warriorwolf.github.io/game.html');});
             }, 5000)
             
             restartButton.className = 'hide';
@@ -906,7 +907,7 @@
 
             const timeOut4 = setTimeout(() => {
                  restartButton.className = '';
-                 restartButton.innerHTML = '<a href="game.html">Play again? </a>';
+                 restartButton.innerHTML = '<a href="game.html">Attempt again? </a>';
                  restartButton.style = 'position: absolute; bottom: 1%; left: 48%; width: 8%; height: 4%; background-color: red; color: black; border: solid 3px rgb(41, 39, 39); z-index: 6; opacity: 80%;';
             }, 5000)
             
