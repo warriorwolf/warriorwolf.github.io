@@ -109,12 +109,14 @@
 
     function requestFullScreen() { // full screen request//
         if(fullButton.requestFullscreen) {
+            console.log('request full');
             fullButton.requestFullscreen();
         }
     }
 
     function exitFullScreen(){ // full screen exit request//
         if(fullButton.requestFullscreen) {
+            console.log('request exit full');
             fullButton.exitFullScreen();
         }
     }
