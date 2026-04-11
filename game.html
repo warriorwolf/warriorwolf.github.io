@@ -221,6 +221,13 @@
 
     <script> // scripts //
 
+        document.documentElement.addEventListener('mousedown', () => {
+        document.documentElement.requestFullscreen().catch((error) =>{
+        console.log(error);
+        })
+        }) //full screen event listener//
+
+
         const gameAssets = { //game asset references//
            
             sounds: document.querySelector('#sounds'),
@@ -948,7 +955,10 @@
             }
         }
 
+
         spawnBlackScreen() //player camera spawns here//
+
+        
 
     </script>
     

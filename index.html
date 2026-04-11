@@ -100,26 +100,19 @@
 
 <script>
     const startGameButton = document.querySelector('#play_button');
-    const fullButton = startGameButton;
+    
 
     function startGame() {
         location.assign('https://warriorwolf.github.io/game.html');
-        requestFullScreen();
+    
     }
 
-    function requestFullScreen() { // full screen request//
-        if(fullButton.requestFullscreen) {
-            console.log('request full');
-            fullButton.requestFullscreen();
-        }
-    }
-
-    function exitFullScreen(){ // full screen exit request//
-        if(fullButton.requestFullscreen) {
-            console.log('request exit full');
-            fullButton.exitFullScreen();
-        }
-    }
-
+    document.documentElement.addEventListener('mousedown', () => {
+        document.documentElement.requestFullscreen().catch((error) =>{
+        console.log(error);
+        })
+    }) //full screen function//
+    
+    
 
 </script>
