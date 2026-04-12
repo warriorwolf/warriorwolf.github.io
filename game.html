@@ -124,13 +124,22 @@
             z-index: 6;
         }
 
-        .keyObjectLocationA { /* key item */
+        .keyObjectLocationA { /* key item location A */
             position: absolute;
             z-index: 2;
             width: 20%;
             height: 30%;
             top: 42%;
             left: 40%;
+        }
+
+        .keyObjectLocationB { /* key item location B */
+            position: absolute;
+            z-index: 2;
+            width: 20%;
+            height: 30%;
+            top: 32%;
+            right: 30%;
         }
 
         .doorOpenButton {
@@ -215,13 +224,14 @@
     </div>
 
     <div class="gameObjects"> <!-- in-game objects-->
-         <img src="items/key.png" class="hide" id="keyObjectA" onclick="keyPickUp()"> <!-- key location; 1 = bottom left, 2 = bottom, 3 = far right -->
+         <img src="items/key.png" class="hide" id="keyObjectA" onclick="keyPickUp()"> <!-- key location; 1 = bottom left, 2 = far right -->
+         <img src="items/key.png" class="hide" id="keyObjectB" onclick="keyPickUp()"> <!-- key location; 1 = bottom left, 2 = far right -->
          <button class="doorOpenButton" id="doorOpenButton" onclick="openDoor()"></button>
     </div>
 
     <script> // scripts //
 
-        document.documentElement.addEventListener('mousedown', () => {
+        document.documentElement.addEventListener('keypress', () => {
         document.documentElement.requestFullscreen().catch((error) =>{
         console.log(error);
         })
@@ -236,6 +246,7 @@
             spawnBlackScreen: document.querySelector('.spawnBlackScreenFade'),
             doorButton: document.querySelector('#doorOpenButton'),
             keyObjectA: document.querySelector('#keyObjectA'),
+            keyObjectB: document.querySelector('#keyObjectB'),
 
         }
         
@@ -245,15 +256,13 @@
          roomImgs: gameAssets.room_imgs,
          canMove: true,
          playerHasKey: false,
-         keySpawn: Math.random(Math.floor(1) * 3) // key location; 1 = bottom left, 2 = bottom, 3 = far right//
+         keySpawnVar: 0
     
         }
 
-        if (gameSystemVariables.keySpawn < 1) { // key spawn check//
-            gameSystemVariables.keySpawn = 1;
-        }
+        console.log(gameSystemVariables.keySpawnVar);
 
-        console.log('key spawn: ', gameSystemVariables.keySpawn); //log key spawn for check
+        
 
         function monsterTurn() { //monster AI //
             let monsterDecision = Math.floor(Math.random(2) * 3);// monster decision, if 0 is chosen, monster stays in place.//
@@ -694,7 +703,7 @@
                     gameSystemVariables.canMove = false;
                     monsterTurn();
 
-                    if (gameSystemVariables.playerHasKey == false && gameSystemVariables.keySpawn == 1) {
+                    if (gameSystemVariables.playerHasKey == false && gameSystemVariables.keySpawnVar == 1) {
                         gameAssets.keyObjectA.className = 'keyObjectLocationA';
                     }
 
@@ -747,7 +756,7 @@
                     gameSystemVariables.canMove = false;
                     monsterTurn();
 
-                    if (gameSystemVariables.playerHasKey == false && gameSystemVariables.keySpawn == 1) {
+                    if (gameSystemVariables.playerHasKey == false && gameSystemVariables.keySpawnVar == 1) {
                         gameAssets.keyObjectA.className = 'keyObjectLocationA';
                     }
 
@@ -882,7 +891,7 @@
             const timeOut2 = setTimeout(() => { //remove blackScreen, spawn in starting room.//
                 gameAssets.spawnBlackScreen.remove();
                
-            },1300)
+            },1500)
         }
 
         function lose() { // lose screen //
@@ -957,8 +966,6 @@
 
 
         spawnBlackScreen() //player camera spawns here//
-
-        
 
     </script>
     

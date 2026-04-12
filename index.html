@@ -61,14 +61,14 @@
 
             function changePlayButtonText() {
                 const playButton = document.querySelector('#play_button');
-                playButton.innerHTML = '<a href="game.html">die</a>';
+                playButton.innerHTML = '<a href="game.html">Die</a>';
                 playButton.onmouseover='';
             }
         </script>
     </body>
 
     <div id="buttons"> <!-- buttons-->
-         <button id="play_button" onclick="startGame()" onmouseover="changePlayButtonText()"><a href="game.html">Play</a></button>
+         <button id="play_button" onclick="startGame()" onmouseover="changePlayButtonText()">Play</button>
 
          <button id="tutorial_button" onclick="displayTutorialText()">How to play</button>
 
@@ -105,14 +105,6 @@
     function startGame() {
         location.assign('https://warriorwolf.github.io/game.html');
     
-    }
-
-    document.documentElement.addEventListener('mousedown', () => {
-        document.documentElement.requestFullscreen().catch((error) =>{
-        console.log(error);
-        })
-    }) //full screen function//
-    
-    
+    }  
 
 </script>
